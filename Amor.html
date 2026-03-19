@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Boda de Verónica & Ariel</title>
+  <meta name="description" content="¡Te invitamos a nuestra boda!">
+  <link rel="icon" href="fotos/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="fotos/logo.png">
+
+  <!-- ===== FUENTES ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       VARIABLES — AQUÍ CAMBIAS COLORES FÁCILMENTE
+    ============================================================ */
+    :root {
+      --negro:    #9da497;   /* fondo oscuro */
+      --crema:    #eaeef5;   /* texto claro */
+      --blanco:   #eaeef5;
+      --gris:     #d2cdd0;
+      --acento:   #9A8B78;   /* dorado/arena */
+      --primary:  #585148;   /* dorado/arena */
+      --serif:    'Cormorant Garamond', Georgia, serif;
+      --sans:     'Montserrat', Arial, sans-serif;
+    }
+
+    /* ============================================================
+       RESET Y BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--negro);
+      color: var(--crema);
+      font-family: var(--sans);
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    img { max-width: 100%; display: block; }
+    a   { text-decoration: none; color: inherit; }
+
+    /* ============================================================
+       TIPOGRAFÍA GLOBAL
+    ============================================================ */
+    .serif    { font-family: var(--serif); }
+    .sans     { font-family: var(--sans); }
+    .uppercase{ text-transform: uppercase; letter-spacing: 0.2em; }
+    .light    { font-weight: 300; }
+    .medium   { font-weight: 500; }
+    .italic   { font-style: italic; }
+
+    /* ============================================================
+       POPUP DE AUDIO (pantalla de bienvenida)
+    ============================================================ */
+    #audioPopup {
+      position: fixed; inset: 0; z-index: 1000;
+
+      /* ✅ FOTO DE FONDO — usa la misma de portada o una diferente */
+      background:
+        linear-gradient(rgba(35,34,32,0.73), rgba(35,34,32,0.73)),
+        url('fotos/portada.jpg') center/cover no-repeat;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .popup-box {
+      display: flex; flex-direction: column; align-items: center; gap: 2rem;
+      padding: 3rem 2.5rem;
+      max-width: 340px; width: 90%;
+      background: rgba(25, 24, 22, 0.65);   /* ✅ semitransparente, no sólido */
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(239,236,226,0.2);
+    }
+    .popup-box h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-align: center;
+      color: var(--negro);
+    }
+    .popup-box p {
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-align: center;
+      color: rgba(239,236,226,0.6);
+      text-transform: uppercase;
+    }
+    .popup-btns { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
+    .btn-popup {
+      width: 100%; padding: 0.85rem 2rem;
+      border: 1px solid rgba(239,236,226,0.5);
+      background: transparent; color: var(--negro);
+      font-family: var(--sans); font-size: 0.7rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      cursor: pointer; border-radius: 50px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .btn-popup:hover { background: var(--negro); color: var(--crema); }
+
+    /* Elemento de audio oculto */
+    #bgMusic { display: none; }
+
+    /* ============================================================
+       BOTÓN FLOTANTE MÚSICA
+    ============================================================ */
+    #musicBtn {
+      position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 500;
+      width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(35,34,32,0.85);
+      border: 1px solid rgba(239,236,226,0.3);
+      color: var(--crema); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: transform 0.3s;
+    }
+    #musicBtn:hover { transform: scale(1.1); }
+
+    /* Botón volver arriba */
+    #topBtn {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 500;
+      width: 42px; height: 42px; border-radius: 50%;
+      background: rgba(35,34,32,0.85);
+      border: 1px solid rgba(239,236,226,0.3);
+      color: var(--crema); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; opacity: 0;
+      transition: opacity 0.4s, transform 0.3s;
+    }
+    #topBtn.visible { opacity: 1; }
+    #topBtn:hover   { transform: scale(1.1); }
+
+    /* ============================================================
+       SECCIÓN 1 — PORTADA
+    ============================================================ */
+    #portada {
+      position: relative; width: 100%; height: 100svh;
+      overflow: hidden; display: flex; align-items: flex-end;
+    }
+    .portada-foto {
+      position: absolute; inset: 0;
+      background: url('fotos/portada.jpg') center/cover no-repeat;
+    }
+    /* Gradiente oscuro sobre la foto */
+    .portada-foto::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(35,34,32,0.85) 0%, transparent 60%);
+    }
+    .portada-texto {
+      position: relative; z-index: 2;
+      width: 100%; padding: 2rem clamp(1.5rem, 5vw, 4rem) 3rem;
+      display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+      text-align: center;
+    }
+    .portada-texto .anuncio {
+      font-family: var(--sans); font-size: clamp(0.95rem, 1.5vw, 0.7rem);
+      letter-spacing: 0.35em; text-transform: uppercase; color: var(--blanco);
+      margin-bottom: 0.5rem;
+    }
+    .portada-nombres {
+      font-family: var(--serif); font-size: clamp(3.5rem, 10vw, 7rem);
+      font-weight: 400; line-height: 0.9; color: var(--blanco);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .portada-nombres .amp {
+      font-family: var(--serif); font-size: 0.55em;
+      font-style: italic; color: var(--blanco); margin: 0 0.3rem;
+      align-self: center;
+    }
+    .portada-fecha {
+      font-family: var(--sans); font-size: clamp(1.1rem, 1.8vw, 0.8rem);
+      letter-spacing: 0.4em; text-transform: uppercase; color: var(--crema);
+      margin-top: 0.5rem;
+    }
+    .portada-linea {
+      width: 60px; height: 1px; background: var(--blanco); margin: 0.5rem auto;
+    }
+    .portada-lugar {
+      font-family: var(--sans); font-size: clamp(1.0rem, 1.5vw, 0.68rem);
+      letter-spacing: 0.3em; text-transform: uppercase; color: rgba(239,236,226,0.7);
+    }
+    /* Flecha scroll */
+    .scroll-hint {
+      position: absolute; bottom: 1.2rem; left: 50%; transform: translateX(-50%);
+      z-index: 3; animation: bounce 2s infinite;
+      font-size: 1.2rem; color: rgba(239,236,226,0.4);
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ============================================================
+       SECCIONES — ESTRUCTURA GENERAL
+    ============================================================ */
+    .section {
+      padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 4rem);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 400; letter-spacing: 0.05em;
+      text-align: center; margin-bottom: 1rem;
+    }
+    .divider {
+      width: 80px; height: 1px; background: currentColor;
+      margin: 1.5rem auto; opacity: 0.3;
+    }
+
+    /* ============================================================
+       SECCIÓN 2 — PRESENTACIÓN
+    ============================================================ */
+    #presentacion {
+      background: var(--negro); color: var(--crema);
+      gap: 2.5rem;
+    }
+    .presentacion-grid {
+      display: grid;
+      grid-template-columns: 1fr clamp(200px, 45vw, 380px) 1fr;
+      gap: 2rem; align-items: center; width: 100%; max-width: 1100px;
+      margin: 0 auto;
+    }
+    .pres-columna { text-align: center; }
+    .pres-columna h3 {
+      font-family: var(--serif); font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+      font-weight: 400; margin-bottom: 0.4rem;
+    }
+    .pres-columna p {
+      font-family: var(--sans); font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+      font-weight: 300; opacity: 0.7; line-height: 1.8;
+    }
+    .pres-foto-central {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      border: 6px solid var(--negro);
+      outline: 1px solid rgba(239,236,226,0.15);
+    }
+    .pres-cita {
+      max-width: 680px; text-align: center;
+      font-family: var(--serif); font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      font-style: italic; font-weight: 300; line-height: 1.8;
+      color: rgba(239,236,226,0.8);
+    }
+    .pres-invitacion {
+      text-align: center;
+      font-family: var(--sans); font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+      letter-spacing: 0.1em; opacity: 0.75;
+    }
+
+    /* Versión móvil de presentación */
+    @media (max-width: 700px) {
+      .presentacion-grid {
+        grid-template-columns: 1fr;
+      }
+      .pres-foto-central { max-height: 350px; }
+    }
+
+    /* ============================================================
+   SECCIÓN 3 — COUNTDOWN
+============================================================ */
+#countdown {
+  position: relative;
+  color: var(--blanco);
+  overflow: hidden;
+}
+
+/* ✅ CAMBIA LA FOTO: guarda tu imagen como "fotos/fondo-countdown.jpg" */
+#countdown::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('fotos/fondo-countdown.jpg') center/cover no-repeat;
+  z-index: 0;
+}
+
+/* Capa oscura sobre la foto (igual que en portada) */
+#countdown::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(35,34,32,0.75) 0%, rgba(35,34,32,0.45) 100%);
+  z-index: 1;
+}
+
+/* Todo el contenido queda encima de la foto */
+#countdown > * {
+  position: relative;
+  z-index: 2;
+}
+
+#countdown .section-title { color: var(--blanco); }
+
+.countdown-wrapper {
+  display: flex; gap: clamp(1rem, 4vw, 3rem);
+  margin-top: 2rem; flex-wrap: wrap; justify-content: center;
+}
+.count-item {
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+  min-width: 80px;
+}
+.count-num {
+  font-family: var(--serif); font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 300; line-height: 1; color: var(--blanco);
+}
+.count-label {
+  font-family: var(--sans); font-size: 0.55rem;
+  letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.6;
+  color: var(--crema);
+}
+.count-sep {
+  font-family: var(--serif); font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 300; line-height: 1; padding-top: 0.2em;
+  opacity: 0.4; align-self: flex-start; color: var(--blanco);
+}
+.countdown-done {
+  font-family: var(--serif); font-size: clamp(2rem, 5vw, 3rem);
+  font-style: italic; text-align: center; color: var(--blanco);
+}
+
+/* ============================================================
+   SECCIÓN 4 — ITINERARIO
+============================================================ */
+#itinerario {
+  background: var(--blanco); color: var(--blanco);
+}
+
+#itinerario .section-title {
+      font-family: var(--serif);
+      font-size: clamp(2.5rem, 5vw, 3.2rem);
+      font-weight: 400; letter-spacing: 0.05em;
+      text-align: center; margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+
+.itinerario-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* 2 columnas fijas, siempre iguales */
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 960px;
+  margin-top: 2rem;
+}
+
+.itinerario-cita {
+      text-align: center;
+      font-family: var(--serif); font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      font-style: italic; font-weight: 300; line-height: 1.8;
+      color:var(--primary);
+    }
+
+/* En móvil: una columna */
+@media (max-width: 640px) {
+  .itinerario-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.itinerario-item {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;   /* contenido pegado abajo, foto domina arriba */
+  gap: 0.8rem;
+  text-align: center;
+  padding: 2.5rem 2rem;
+  min-height: clamp(380px, 55vw, 560px);  /* altura generosa para que la foto se vea */
+  border: none;                /* quitamos el borde, la foto habla por sí sola */
+}
+
+/* ✅ FOTO DE FONDO — CEREMONIA */
+.itinerario-item:nth-child(1) {
+  background: url('fotos/fondo-ceremonia.jpg') center/cover no-repeat;
+}
+
+/* ✅ FOTO DE FONDO — RECEPCIÓN */
+.itinerario-item:nth-child(2) {
+  background: url('fotos/fondo-recepcion.jpg') center/cover no-repeat;
+}
+
+/* Gradiente elegante: transparente arriba → oscuro abajo
+   El texto queda legible sobre la zona oscura */
+.itinerario-item::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(35, 34, 32, 0.90) 0%,
+    rgba(35, 34, 32, 0.40) 50%,
+    rgba(35, 34, 32, 0.10) 100%
+  );
+  z-index: 0;
+}
+
+/* Todo el contenido por encima del gradiente */
+.itinerario-item > * {
+  position: relative;
+  z-index: 1;
+}
+
+.itinerario-icon {
+  font-size: 1.8rem;
+  opacity: 0.85;
+  margin-bottom: 0.2rem;
+}
+
+.itinerario-titulo {
+  font-family: var(--serif);
+  font-size: clamp(1.7rem, 3vw, 2.1rem);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+.itinerario-hora {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.itinerario-lugar {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 300;
+  opacity: 0.8;
+  line-height: 1.7;
+}
+
+.btn-maps {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.4rem;
+  border: 1px solid rgba(239, 236, 226, 0.45);
+  border-radius: 50px;
+  font-family: var(--sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--crema);
+  background: transparent;
+  margin-top: 0.6rem;
+  transition: background 0.3s, color 0.3s;
+}
+
+.btn-maps:hover { background: var(--crema); color: var(--negro); }
+
+/* ============================================================
+   SECCIÓN — HOSPEDAJES
+============================================================ */
+#hospedajes {
+  background: var(--negro);
+  color: var(--crema);
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+
+#hospedajes .section-title {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--blanco);
+  text-align: center;
+}
+
+/* Fila de 3 hoteles */
+.hospedajes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1.5rem, 4vw, 3rem);
+  width: 100%;
+  max-width: 960px;
+}
+
+@media (max-width: 680px) {
+  .hospedajes-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+}
+
+/* Tarjeta individual */
+.hospedaje-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Contenedor de la foto — cuadrado con nombre superpuesto */
+.hospedaje-foto-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+/* ✅ La foto del hotel */
+.hospedaje-foto-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.hospedaje-card:hover .hospedaje-foto-wrap img {
+  transform: scale(1.04);  /* zoom suave al hacer hover */
+}
+
+/* Gradiente oscuro solo en la zona inferior de la foto */
+.hospedaje-foto-wrap::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(35,34,32,0.80) 0%,
+    transparent 50%
+  );
+  z-index: 1;
+}
+
+/* Nombre del hotel encima de la foto */
+.hospedaje-nombre {
+  position: absolute;
+  bottom: 0.9rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  font-family: var(--sans);
+  font-size: clamp(0.52rem, 1.1vw, 0.65rem);
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--blanco);
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Enlace "VER EN GOOGLE MAPS →" debajo de la foto */
+.hospedaje-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-family: var(--sans);
+  font-size: clamp(0.58rem, 1.2vw, 0.68rem);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--crema);
+  text-decoration: none;
+  transition: opacity 0.3s;
+  padding-left: 0.1rem;
+}
+
+/* Línea flecha al lado del texto */
+.hospedaje-link::after {
+  content: '';
+  display: inline-block;
+  width: 40px;
+  height: 1px;
+  background: var(--crema);
+  transition: width 0.3s ease;
+}
+
+.hospedaje-link:hover { opacity: 0.6; }
+.hospedaje-link:hover::after { width: 64px; }
+/* ============================================================
+   SECCIÓN 5 — DRESSCODE
+============================================================ */
+#dresscode {
+  position: relative;
+  color: var(--crema);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* ✅ FOTO DE FONDO — guarda como "fotos/fondo-dresscode.jpg" */
+#dresscode::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url('fotos/fondo-dresscode.jpg') center/cover no-repeat;
+  z-index: 0;
+}
+
+/* Gradiente oscuro — igual que countdown */
+#dresscode::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(35,34,32,0.85) 0%,
+    rgba(35,34,32,0.55) 100%
+  );
+  z-index: 1;
+}
+
+/* Todo el contenido por encima */
+#dresscode > * {
+  position: relative;
+  z-index: 2;
+}
+
+#dresscode .section-title {
+  color: var(--blanco);
+}
+
+.dresscode-box {
+  max-width: 600px; margin: 2rem auto 0;
+  border: 1px solid rgba(239,236,226,0.2);
+  padding: clamp(2rem, 5vw, 3rem) clamp(1.5rem, 5vw, 3rem);
+  display: flex; flex-direction: column; gap: 1.2rem; align-items: center;
+  background: rgba(35,34,32,0.45);   /* caja levemente oscura sobre la foto */
+  backdrop-filter: blur(3px);
+}
+
+.dresscode-tipo {
+  font-family: var(--serif); font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 400;
+  color: var(--blanco);
+}
+
+.dresscode-color {
+  font-family: var(--sans); font-size: 0.7rem;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  opacity: 0.75; color: var(--crema);
+}
+
+.dresscode-nota {
+  font-family: var(--sans); font-size: 0.6rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  background: rgba(239,236,226,0.15);
+  border: 1px solid rgba(239,236,226,0.25);
+  color: var(--crema); padding: 0.4rem 1rem;
+}
+
+.dresscode-opt {
+  font-family: var(--serif); font-style: italic;
+  font-size: 0.9rem; opacity: 0.65; color: var(--crema);
+}
+
+/* ============================================================
+   SECCIÓN 6 — OBSEQUIOS
+============================================================ */
+#obsequios {
+  position: relative;
+  color: var(--crema);
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  min-height: 100svh;
+}
+
+/* ✅ FOTO DE FONDO — guarda como "fotos/fondo-obsequios.jpg" */
+#obsequios::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url('fotos/fondo-obsequios.jpg') center/cover no-repeat;
+  z-index: 0;
+}
+
+/* Gradiente oscuro sobre la foto */
+#obsequios::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(35,34,32,0.55) 0%,
+    rgba(35,34,32,0.70) 100%
+  );
+  z-index: 1;
+}
+
+/* Todo el contenido por encima */
+#obsequios > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Título grande uppercase flotando sobre la foto */
+#obsequios .section-title {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--blanco);
+  text-align: center;
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+}
+
+/* Descripción encima del panel */
+.obsequios-desc {
+  display: none; /* la movemos dentro del panel abajo */
+}
+
+/* Panel semitransparente horizontal */
+.obsequios-panel {
+  width: 100%;
+  max-width: 1060px;
+  background: rgba(25, 24, 22, 0.72);
+  backdrop-filter: blur(4px);
+  padding: clamp(2.5rem, 4vw, 3.5rem) clamp(2rem, 4vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Texto descriptivo dentro del panel */
+.obsequios-panel-desc {
+  font-family: var(--sans);
+  font-size: clamp(0.78rem, 1.6vw, 0.92rem);
+  font-weight: 300;
+  line-height: 1.9;
+  text-align: center;
+  color: var(--crema);
+  opacity: 0.85;
+  max-width: 720px;
+}
+
+/* Fila de 4 columnas */
+.obsequios-row {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* Separador vertical entre columnas */
+.obsequios-sep {
+  width: 1px;
+  background: rgba(239,236,226,0.2);
+  flex-shrink: 0;
+  align-self: stretch;
+  margin: 0;
+}
+
+/* Cada columna */
+.obsequio-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+
+/* Nombre de la tienda / banco en estilo logo */
+.obsequio-marca {
+  font-family: var(--sans);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--blanco);
+  line-height: 1;
+}
+
+.obsequio-marca img {
+  height: 32px;       /* ✅ ajusta el alto según te quede mejor */
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1);  /* convierte cualquier logo a blanco */
+  opacity: 0.9;
+}
+
+/* Lluvia de sobres no tiene logo, mantiene el texto */
+.obsequio-marca.lluvia img { display: none; }
+
+/* Variante serif para "Lluvia de Sobres" */
+.obsequio-marca.lluvia {
+  font-family: var(--sans);
+  font-size: clamp(0.85rem, 2vw, 1.1rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.obsequio-detalle {
+  font-family: var(--sans);
+  font-size: clamp(0.65rem, 1.3vw, 0.75rem);
+  font-weight: 300;
+  opacity: 0.7;
+  line-height: 1.8;
+  color: var(--crema);
+}
+
+/* Enlace "VISITAR →" con línea */
+.btn-obsequio {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--crema);
+  text-decoration: none;
+  margin-top: 0.3rem;
+  transition: opacity 0.3s;
+}
+
+.btn-obsequio::after {
+  content: '';
+  display: inline-block;
+  width: 36px;
+  height: 1px;
+  background: var(--crema);
+  transition: width 0.3s;
+}
+
+.btn-obsequio:hover { opacity: 0.7; }
+.btn-obsequio:hover::after { width: 56px; }
+
+/* Móvil: colapsa a 2 columnas, luego 1 */
+@media (max-width: 680px) {
+  .obsequios-row {
+    flex-wrap: wrap;
+  }
+  .obsequio-col {
+    flex: 1 1 45%;
+    border-bottom: 1px solid rgba(239,236,226,0.15);
+    padding: 1.5rem 0.5rem;
+  }
+  .obsequios-sep { display: none; }
+}
+
+@media (max-width: 400px) {
+  .obsequio-col { flex: 1 1 100%; }
+}
+
+    /* ============================================================
+       SECCIÓN 7 — GALERÍA
+    ============================================================ */
+    #galeria {
+      background: var(--crema); color: var(--negro);
+      padding-bottom: 0;
+    }
+    #galeria .section-title { color: var(--primary); }
+    .galeria-track {
+      display: flex; align-items: center;
+      height: clamp(320px, 68vw, 620px);
+      gap: clamp(0.3rem, 1vw, 0.6rem);
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .galeria-img {
+      flex-shrink: 0;
+      height: 100%;
+      width: auto;          /* ✅ cada foto ocupa su ancho natural */
+      object-fit: contain;  /* ✅ muestra la foto completa sin recortar */
+      background: transparent;
+      cursor: zoom-in;
+    }
+    .galeria-img.portrait  { width: calc(var(--h) * 0.66); }
+    .galeria-img.landscape { width: calc(var(--h) * 1.5); }
+
+    .galeria-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      z-index: 10; width: clamp(36px, 5vw, 56px); height: clamp(36px, 5vw, 56px);
+      border-radius: 50%; border: 1px solid rgba(35,34,32,0.3);
+      background: rgba(239,236,226,0.8); color: var(--negro);
+      font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.3s;
+    }
+    .galeria-btn:hover { background: var(--negro); color: var(--crema); }
+    .galeria-btn.left  { left: 1rem; }
+    .galeria-btn.right { right: 1rem; }
+
+    /* ============================================================
+       LIGHTBOX — Vista ampliada al clic
+    ============================================================ */
+    #galeria-lightbox {
+      position: fixed; inset: 0; z-index: 900;
+      background: rgba(22, 21, 19, 0.96);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    #galeria-lightbox.activo {
+      opacity: 1; pointer-events: all;
+    }
+    .lb-contenedor {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%;
+      padding: 3rem 5rem;
+    }
+    .lb-img {
+      max-width: 100%; max-height: 100%;
+      object-fit: contain;
+      border: 1px solid rgba(239,236,226,0.08);
+      box-shadow: 0 12px 80px rgba(0,0,0,0.7);
+      transition: opacity 0.25s ease;
+    }
+    .lb-img.cargando { opacity: 0; }
+    .lb-cerrar {
+      position: fixed; top: 1.2rem; right: 1.6rem;
+      background: transparent; border: none;
+      color: var(--crema); font-size: 2.4rem; line-height: 1;
+      cursor: pointer; opacity: 0.55;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 901; padding: 0.2rem 0.5rem;
+      font-family: var(--sans); font-weight: 200;
+    }
+    .lb-cerrar:hover { opacity: 1; transform: scale(1.15); }
+    .lb-nav {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      background: rgba(239,236,226,0.12);
+      border: 1px solid rgba(239,236,226,0.2);
+      color: var(--crema); font-size: 2rem;
+      width: 50px; height: 50px; border-radius: 50%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.25s, transform 0.2s;
+      z-index: 901;
+    }
+    .lb-nav:hover { background: rgba(239,236,226,0.28); transform: translateY(-50%) scale(1.08); }
+    .lb-nav.prev { left: 1rem; }
+    .lb-nav.next { right: 1rem; }
+    .lb-contador {
+      position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%);
+      font-family: var(--sans); font-size: 0.58rem;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(239,236,226,0.4); z-index: 901;
+    }
+    @media (max-width: 600px) {
+      .lb-contenedor { padding: 3rem 0.5rem; }
+      .lb-nav { width: 38px; height: 38px; font-size: 1.4rem; }
+      .lb-nav.prev { left: 0.3rem; }
+      .lb-nav.next { right: 0.3rem; }
+    }
+
+    /* ============================================================
+       SECCIÓN 8 — RSVP
+    ============================================================ */
+    #rsvp {
+      background: var(--crema); color: var(--primary);
+    }
+    .rsvp-box {
+      max-width: 520px; width: 100%; margin: 0 auto;
+      text-align: center; display: flex; flex-direction: column; gap: 1.5rem;
+      align-items: center;  /* ✅ esto centra el botón */
+    }
+    .rsvp-desc {
+      font-family: var(--serif); font-style: italic;
+      font-size: clamp(1.35rem, 2.2vw, 1.2rem); opacity: 0.75;
+    }
+    .rsvp-limit {
+      font-family: var(--sans); font-size: 0.85rem;
+      letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.5;
+    }
+    .btn-rsvp {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.2rem 2.8rem;        /* ✅ más grande */
+      border-radius: 50px;
+      font-family: var(--sans);
+      font-size: 0.85rem;             /* ✅ letra más grande */
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      background: #25D366;
+      color: #FFFFFF;
+      border: none;
+      box-shadow: 0 4px 24px rgba(37, 211, 102, 0.3);
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+    }
+
+    .btn-rsvp:hover {
+      background: #1ebe5d;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(37, 211, 102, 0.4);
+    }
+
+    .btn-rsvp:active {
+      transform: translateY(0);
+    }
+
+    /* Logo SVG de WhatsApp dentro del botón */
+   .btn-rsvp svg {
+      width: 24px;   /* ✅ antes 20px */
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .btn-rsvp:hover { background: var(--primary); color: var(--negro); }
+
+    /* ============================================================
+       FOOTER — HASHTAG
+    ============================================================ */
+    #footer {
+      background: var(--negro); color: var(--crema);
+      text-align: center; padding: 4rem 2rem;
+      display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+    }
+    .hashtag-label {
+      font-family: var(--sans); font-size: 0.6rem;
+      letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.5;
+    }
+    .hashtag-tag {
+      font-family: var(--serif); font-size: clamp(2rem, 6vw, 3.5rem);
+      letter-spacing: 0.1em; color: var(--crema);
+    }
+    .hashtag-sub {
+      font-family: var(--sans); font-size: 0.72rem;
+      opacity: 0.5; max-width: 400px; line-height: 1.8;
+    }
+    .footer-cr {
+      font-family: var(--sans); font-size: 0.6rem;
+      opacity: 0.3; margin-top: 2rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* ============================================================
+       ANIMACIONES DE ENTRADA (Intersection Observer)
+    ============================================================ */
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1; transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.35s; }
+    .reveal-delay-4 { transition-delay: 0.5s; }
+
+    /* ============================================================
+       SCROLLBAR PERSONALIZADO
+    ============================================================ */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--negro); }
+    ::-webkit-scrollbar-thumb { background: var(--acento); border-radius: 2px; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       POPUP DE BIENVENIDA (música)
+  ============================================================ -->
+  <div id="audioPopup">
+    <div class="popup-box">
+
+    <!-- ✅ Logo con fondo negro invisible gracias a mix-blend-mode -->
+    <img src="fotos/logo-VA-blanco_2.png"
+        alt="Verónica & Ariel"
+        style="
+          width: 220px;
+          mix-blend-mode: screen;
+          margin-bottom: -0.5rem;
+        ">
+
+    <p>Boda · 26 · Junio · 2026</p>
+
+    <div class="popup-btns">
+      <button class="btn-popup" onclick="abrirConMusica()">♪ &nbsp; Abrir con música</button>
+      <button class="btn-popup" onclick="abrirSinMusica()">Abrir sin música</button>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- Audio de fondo -->
+  <!-- ✅ CÓMO CAMBIAR LA MÚSICA:
+       1. Sube tu archivo .mp3 a la misma carpeta que este HTML
+       2. Cámbialo en el src de abajo, ejemplo: src="musica/mi-cancion.mp3"
+       3. También puedes usar un enlace directo de internet (si es permitido)
+  -->
+  <audio id="bgMusic" loop>
+    <source src="musica/cancion.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Botón flotante música -->
+  <button id="musicBtn" title="Pausar/Reproducir música" onclick="toggleMusica()">♫</button>
+
+  <!-- Botón volver arriba -->
+  <button id="topBtn" title="Volver al inicio" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+
+  <!-- ============================================================
+       SECCIÓN 1 — PORTADA
+  ============================================================ -->
+  <section id="portada">
+    <!--
+      ✅ CÓMO CAMBIAR LA FOTO DE PORTADA:
+      1. Guarda tu foto como "portada.jpg" dentro de una carpeta llamada "fotos/"
+      2. O cambia la ruta en el CSS arriba, donde dice:
+         background: url('fotos/portada.jpg')
+    -->
+    <div class="portada-foto"></div>
+
+    <div class="portada-texto">
+      <span class="anuncio">Con la bendición de Dios</span>
+      <div class="portada-nombres">
+        <span>Verónica</span>
+        <span class="amp">&amp;</span>
+        <span>Ariel</span>
+      </div>
+      <div class="portada-linea"></div>
+      <div class="portada-fecha">26 · Junio · 2026</div>
+      <div class="portada-lugar">Aguascalientes, Ags</div>
+    </div>
+
+    <div class="scroll-hint">↓</div>
+  </section>
+
+
+  <!-- ============================================================
+       SECCIÓN 2 — PRESENTACIÓN / PADRES
+  ============================================================ -->
+  <section id="presentacion" class="section">
+
+    <p class="pres-invitacion reveal">
+
+      Tenemos el gusto de invitarles a celebrar nuestra unión en matrimonio.
+    </p>
+    <p class="pres-cita reveal">
+      "El que halla esposa halla el bien y alcanza el favor del Señor."
+      <br><small style="font-size:0.85em; opacity:0.75; font-style:normal;">— Proverbios 18:22</small>
+    </p>
+
+    <div class="presentacion-grid" style="margin: 2.5rem 0;">
+
+      <!-- Columna padres de ella -->
+      <div class="pres-columna reveal reveal-delay-1">
+        <h3>Padres de la novia</h3>
+        <div class="divider" style="width:40px; margin:0.8rem auto;"></div>
+        <!--
+          ✅ CAMBIAR NOMBRES DE PADRES DE ELLA
+        -->
+        <p>José de Jesús Acosta Ornelas<br>Verónica Galván Loera</p>
+      </div>
+
+      <!-- Foto central -->
+      <div class="reveal reveal-delay-2">
+        <!--
+          ✅ CAMBIAR FOTO CENTRAL:
+          Guarda como "fotos/pareja.jpg"
+        -->
+        <img class="pres-foto-central" src="fotos/pareja.jpg"
+             alt="Foto de Verónica y Ariel"
+             onerror="this.style.background='#2C2B29'; this.style.minHeight='300px'; this.removeAttribute('src');">
+      </div>
+
+      <!-- Columna padres de él -->
+      <div class="pres-columna reveal reveal-delay-3">
+        <h3>Padres del novio</h3>
+        <div class="divider" style="width:40px; margin:0.8rem auto;"></div>
+        <p>Ariel San Martin Hernández ✞<br>Yolanda Navarro Márquez </p>
+      </div>
+
+    </div>
+
+    <div class="pres-columna reveal reveal-delay-3">
+        <h3>Padrinos</h3>
+        <div class="divider" style="width:40px; margin:0.8rem auto;"></div>
+        <p>José de Jesús Acosta López<br>Ma. Angélica Ornelas Márquez </p>
+      </div>
+
+
+  </section>
+
+
+  <!-- ============================================================
+       SECCIÓN 3 — CUENTA REGRESIVA
+  ============================================================ -->
+  <section id="countdown" class="section">
+    <div class="section-title serif reveal">Sólo faltan...</div>
+
+    <div class="countdown-wrapper reveal reveal-delay-1">
+      <div class="count-item">
+        <span class="count-num" id="cdDias">00</span>
+        <span class="count-label">Días</span>
+      </div>
+      <span class="count-sep">:</span>
+      <div class="count-item">
+        <span class="count-num" id="cdHoras">00</span>
+        <span class="count-label">Horas</span>
+      </div>
+      <span class="count-sep">:</span>
+      <div class="count-item">
+        <span class="count-num" id="cdMinutos">00</span>
+        <span class="count-label">Minutos</span>
+      </div>
+      <span class="count-sep">:</span>
+      <div class="count-item">
+        <span class="count-num" id="cdSegundos">00</span>
+        <span class="count-label">Segundos</span>
+      </div>
+    </div>
+    <div class="countdown-done serif italic" id="cdTextoFinal" style="display:none;">
+      ¡Llegó la hora! 🎉
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       SECCIÓN 4 — ITINERARIO
+  ============================================================ -->
+  <section id="itinerario" class="section">
+    <div class="section-title serif reveal">El gran día</div>
+    <p class="itinerario-cita">
+      El matrimonio es una vocación, es un proyecto ambicioso, pero hecho posible por la gracia.<br>
+      A través de ella Dios los capacita a decirse cada día  'Hoy te amo más que ayer'
+    </p>
+
+    <div class="itinerario-grid">
+
+      <!-- Ceremonia -->
+      <div class="itinerario-item reveal reveal-delay-1">
+        <div class="itinerario-titulo serif">Sacramento del matrimonio</div>
+        <!--
+          ✅ CAMBIAR HORA DE CEREMONIA
+        -->
+        <div class="itinerario-hora">12:45hrs.</div>
+        <!--
+          ✅ CAMBIAR NOMBRE Y DIRECCIÓN DE LA IGLESIA
+        -->
+        <div class="itinerario-lugar">
+          Parroquia del Señor del Encino<br>
+          Jardin, Barrio del Encino, Aguascalientes
+        </div>
+        <!--
+          ✅ CAMBIAR ENLACE DE GOOGLE MAPS
+          Entra a Google Maps → busca el lugar → comparte → copia el enlace corto
+        -->
+        <a class="btn-maps" href="https://maps.app.goo.gl/bqJ77M44dWoVaEPz5" target="_blank" rel="noopener">
+          📍 Ver en Google Maps
+        </a>
+      </div>
+
+      <!-- Recepción -->
+      <div class="itinerario-item reveal reveal-delay-2">
+        <div class="itinerario-titulo serif">Recepción</div>
+        <!--
+          ✅ CAMBIAR HORA DE RECEPCIÓN
+        -->
+        <div class="itinerario-hora">15:00 hrs.</div>
+        <!--
+          ✅ CAMBIAR NOMBRE Y DIRECCIÓN DEL SALÓN
+        -->
+        <div class="itinerario-lugar">
+          Viña Las Cruces<br>
+          Carr. Emiliano Zapata, Pabellón de Arteaga, Ags.
+        </div>
+        <!--
+          ✅ CAMBIAR ENLACE DE GOOGLE MAPS
+        -->
+        <a class="btn-maps" href="https://maps.app.goo.gl/6T7xBBRUe7iZsjdk9" target="_blank" rel="noopener">
+          📍 Ver en Google Maps
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       SECCIÓN 5 — DRESSCODE
+  ============================================================ -->
+  <section id="dresscode" class="section">
+    <div class="section-title serif reveal">Dresscode</div>
+    <div class="divider reveal"></div>
+
+    <div class="dresscode-box reveal reveal-delay-1">
+      <!--
+        ✅ CAMBIAR TIPO DE DRESSCODE
+      -->
+      <div class="dresscode-tipo serif">Formal riguroso. Sugerimos evitar tonos rojos y blancos.</div>
+
+      <div class="dresscode-nota sans uppercase" style="font-size:0.6rem; letter-spacing:0.15em;">
+        El blanco está reservado especialmente para la novia.
+      </div>
+    </div>
+  </section>
+
+<!-- ============================================================
+     SECCIÓN — HOSPEDAJES
+============================================================ -->
+<section id="hospedajes">
+
+  <div class="section-title serif reveal">Hospedajes sugeridos</div>
+
+  <div class="hospedajes-grid">
+
+    <!-- ── HOTEL 1 ─────────────────────────────── -->
+    <div class="hospedaje-card reveal reveal-delay-1">
+      <div class="hospedaje-foto-wrap">
+        <!--
+          ✅ CAMBIAR FOTO:
+          Guarda la imagen como "fotos/hotel1.jpg"
+          Funciona mejor con fotos cuadradas o 4:3
+        -->
+        <img src="fotos/hotel1.jpg" alt="Fiesta Americana Aguascalientes"
+             onerror="this.style.background='#2C2B29'; this.removeAttribute('src');">
+        <!--
+          ✅ CAMBIAR NOMBRE DEL HOTEL
+        -->
+        <div class="hospedaje-nombre">Fiesta Americana Aguascalientes</div>
+      </div>
+      <!--
+        ✅ CAMBIAR ENLACE GOOGLE MAPS
+      -->
+      <a class="hospedaje-link"
+         href="https://maps.app.goo.gl/EF8AKZsUsJ7ACk8o7"
+         target="_blank" rel="noopener">Ver en Google Maps</a>
+    </div>
+
+    <!-- ── HOTEL 2 ─────────────────────────────── -->
+    <div class="hospedaje-card reveal reveal-delay-2">
+      <div class="hospedaje-foto-wrap">
+        <!--
+          ✅ CAMBIAR FOTO: "fotos/hotel2.jpg"
+        -->
+        <img src="fotos/hotel2.jpg" alt="Marriott Hotel Aguascalientes"
+             onerror="this.style.background='#2C2B29'; this.removeAttribute('src');">
+        <!--
+          ✅ CAMBIAR NOMBRE DEL HOTEL
+        -->
+        <div class="hospedaje-nombre">Marriott Hotel Aguascalientes</div>
+      </div>
+      <!--
+        ✅ CAMBIAR ENLACE GOOGLE MAPS
+      -->
+      <a class="hospedaje-link"
+         href="https://maps.app.goo.gl/TwcjaeN9Um6WvEGz6"
+         target="_blank" rel="noopener">Ver en Google Maps</a>
+    </div>
+
+    <!-- ── HOTEL 3 ─────────────────────────────── -->
+    <div class="hospedaje-card reveal reveal-delay-3">
+      <div class="hospedaje-foto-wrap">
+        <!--
+          ✅ CAMBIAR FOTO: "fotos/hotel3.jpg"
+        -->
+        <img src="fotos/hotel3.jpg" alt="Quinta Real Aguascalientes"
+             onerror="this.style.background='#2C2B29'; this.removeAttribute('src');">
+        <!--
+          ✅ CAMBIAR NOMBRE DEL HOTEL
+        -->
+        <div class="hospedaje-nombre">Quinta Real Aguascalientes</div>
+      </div>
+      <!--
+        ✅ CAMBIAR ENLACE GOOGLE MAPS
+      -->
+      <a class="hospedaje-link"
+         href="https://maps.app.goo.gl/kLVHEmVUzMFdoDZ18"
+         target="_blank" rel="noopener">Ver en Google Maps</a>
+    </div>
+
+  </div><!-- /hospedajes-grid -->
+
+</section>
+  <!-- ============================================================
+     SECCIÓN 6 — OBSEQUIOS
+============================================================ -->
+<section id="obsequios">
+
+  <div class="section-title reveal">Obsequios sugeridos</div>
+
+  <div class="obsequios-panel reveal reveal-delay-1">
+
+    <!-- Texto descriptivo dentro del panel -->
+    <p class="obsequios-panel-desc">
+      Tu presencia es nuestro mejor regalo,<br>
+      peeero si gustas colaborar para armar nuestro nuevo hogar, te dejamos algunas opciones:
+    </p>
+
+    <!-- Fila de opciones -->
+    <div class="obsequios-row">
+
+      <!-- ── LIVERPOOL ───────────────────────── -->
+      <div class="obsequio-col">
+        <!--
+          ✅ CAMBIAR: reemplaza el texto del logo y el número de evento
+        -->
+        <div class="obsequio-marca">
+           <img src="fotos/logo-liverpool.png" alt="Liverpool">
+        </div>
+        <div class="obsequio-detalle">Evento: 51948291</div>
+        <a class="btn-obsequio"
+           href="https://mesaderegalos.liverpool.com.mx/milistaderegalos/51948291"
+           target="_blank" rel="noopener">Visitar</a>
+      </div>
+
+      <div class="obsequios-sep"></div>
+
+      <!-- ── AMAZON ──────────────────────────── -->
+      <div class="obsequio-col">
+        <!--
+          ✅ CAMBIAR: actualiza el enlace de tu lista de Amazon
+        -->
+        <div class="obsequio-marca">
+          <img src="fotos/cantia-logo.png" alt="Cantia">
+        </div>
+        <div class="obsequio-detalle">Lista de bodas</div>
+        <a class="btn-obsequio"
+           href="https://cantia.com.mx/apps/giftregistry/registry/22781"
+           target="_blank" rel="noopener">Visitar</a>
+      </div>
+
+      <div class="obsequios-sep"></div>
+
+      <!-- ── BBVA / TRANSFERENCIA ────────────── -->
+      <div class="obsequio-col">
+        <!--
+          ✅ CAMBIAR: nombre, cuenta y CLABE
+        -->
+        <div class="obsequio-marca">
+          <img src="fotos/logo-bbva.png" alt="BBVA">
+        </div>
+        <div class="obsequio-detalle">
+          Verónica Montserrat Acosta Galván<br>
+          CLABE: 012180015316103798<br>
+        </div>
+      </div>
+
+      <div class="obsequios-sep"></div>
+
+      <!-- ── BBVA / TRANSFERENCIA ────────────── -->
+      <div class="obsequio-col">
+        <!--
+          ✅ CAMBIAR: nombre, cuenta y CLABE
+        -->
+        <div class="obsequio-marca">
+          <img src="fotos/logo-bbva.png" alt="BBVA">
+        </div>
+        <div class="obsequio-detalle">
+          Brandon Ariel San Martin Navarro<br>
+          CLABE: 012180015401783625<br>
+        </div>
+      </div>
+
+
+      <div class="obsequios-sep"></div>
+
+      <!-- ── LLUVIA DE SOBRES ────────────────── -->
+      <div class="obsequio-col">
+        <div class="obsequio-marca lluvia">Lluvia<br>de Sobres</div>
+        <div class="obsequio-detalle">En efectivo, el día de la boda.</div>
+      </div>
+
+    </div><!-- /obsequios-row -->
+
+  </div><!-- /obsequios-panel -->
+
+</section>
+
+
+  <!-- ============================================================
+       SECCIÓN 7 — GALERÍA
+  ============================================================ -->
+  <section id="galeria" class="section">
+    <div class="section-title serif reveal">Nuestras memorias</div>
+    <div class="divider reveal" style="background: var(--negro); opacity:0.2;"></div>
+
+    <div class="galeria-track-wrap reveal">
+      <!--
+        ✅ CÓMO CAMBIAR LAS FOTOS DEL CARRUSEL:
+        1. Guarda tus fotos en la carpeta "fotos/" con nombres: foto1.jpg, foto2.jpg, etc.
+        2. Cambia el src de cada <img> abajo
+        3. Las clases "portrait" (vertical) y "landscape" (horizontal) ajustan el ancho
+        4. Puedes agregar o quitar <div class="galeria-img ..."> a gusto
+        Si las fotos no cargan, el fondo gris aparece como placeholder
+      -->
+      <div class="galeria-track" id="galeriaTrack">
+        <img class="galeria-img"  src="fotos/foto1.jpg" alt="" style="--h:100%"
+             onerror="this.style.background='#3a3936'; this.style.width='200px'; this.removeAttribute('src');">
+        <img class="galeria-img" src="fotos/foto2.jpg" alt="" style="--h:100%"
+             onerror="this.style.background='#3a3936'; this.style.width='400px'; this.removeAttribute('src');">
+        <img class="galeria-img "  src="fotos/foto3.jpg" alt="" style="--h:100%"
+             onerror="this.style.background='#3a3936'; this.style.width='200px'; this.removeAttribute('src');">
+        <img class="galeria-img " src="fotos/foto4.jpg" alt="" style="--h:100%"
+             onerror="this.style.background='#3a3936'; this.style.width='400px'; this.removeAttribute('src');">
+        <img class="galeria-img "  src="fotos/foto5.jpg" alt="" style="--h:100%"
+             onerror="this.style.background='#3a3936'; this.style.width='200px'; this.removeAttribute('src');">
+        <img class="galeria-img " src="fotos/foto6.jpg" alt="" style="--h:100%"
+             onerror="this.style.background='#3a3936'; this.style.width='400px'; this.removeAttribute('src');">
+        <img class="galeria-img "  src="fotos/foto8.jpg" alt="" style="--h:100%"
+             onerror="this.style.background='#3a3936'; this.style.width='200px'; this.removeAttribute('src');">
+        <img class="galeria-img " src="fotos/foto7.jpg" alt="" style="--h:100%"
+             onerror="this.style.background='#3a3936'; this.style.width='400px'; this.removeAttribute('src');">
+      </div>
+
+      <button class="galeria-btn left"  onclick="moverGaleria(-1)" aria-label="Anterior">‹</button>
+      <button class="galeria-btn right" onclick="moverGaleria(1)"  aria-label="Siguiente">›</button>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       SECCIÓN 8 — RSVP
+  ============================================================ -->
+  <section id="rsvp" class="section">
+    <div class="section-title serif reveal">RSVP</div>
+    <div class="divider reveal"></div>
+    <p class="rsvp-desc reveal">
+        Hay 1 lugar reservado para ti.
+      </p>
+
+    <div class="divider reveal"></div>
+
+    <div class="rsvp-box">
+      <p class="rsvp-desc reveal">
+        <!--
+          ✅ CAMBIAR TEXTO RSVP
+        -->
+        Por favor confirma tu asistencia antes del 15 de mayo de 2026.
+        <br>Tu lugar nos importa mucho.
+      </p>
+      <p class="rsvp-limit reveal reveal-delay-1">Fecha límite: 15 de mayo, 2026</p>
+
+      <a class="btn-rsvp reveal"
+        href="https://wa.me/5214498132301?text=Hola%20Ver%C3%B3nica%20y%20Ariel%20%F0%9F%92%8D%0ACon%20gusto%20confirmo%20la%20asistencia%20de:%20%5BEscribir%20nombre(s)%20completo(s)%5D%0Apara%20acompa%C3%B1arlos%20el%2026%20de%20junio%20de%202026.%0A%C2%A1Muchas%20gracias!"
+        target="_blank" rel="noopener">
+
+        <!-- Logo oficial de WhatsApp en SVG — no necesitas imagen externa -->
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 3C8.82 3 3 8.82 3 16c0 2.3.62 4.5 1.7 6.4L3 29l6.8-1.67A13 13 0 0 0 16 29c7.18 0 13-5.82 13-13S23.18 3 16 3Z" fill="white" fill-opacity="0.2"/>
+          <path d="M16 5.5A10.5 10.5 0 0 0 7.02 21.3l.28.44-1.18 4.33 4.44-1.16.43.25A10.5 10.5 0 1 0 16 5.5Zm6.14 14.94c-.26.73-1.53 1.4-2.1 1.48-.54.08-1.22.11-1.97-.12-.45-.14-1.03-.33-1.77-.65-3.12-1.35-5.16-4.5-5.31-4.7-.15-.22-1.22-1.62-1.22-3.1 0-1.47.77-2.2 1.05-2.5.27-.3.59-.37.79-.37.2 0 .39 0 .56.01.18 0 .43-.07.67.51.25.6.85 2.07.92 2.22.08.15.13.32.03.52-.1.2-.15.32-.3.5-.14.17-.3.38-.43.51-.14.14-.29.3-.12.58.17.29.74 1.22 1.59 1.97 1.09.97 2.01 1.27 2.3 1.41.28.14.45.12.61-.07.17-.2.72-.84.91-1.13.2-.29.39-.24.66-.14.27.1 1.72.81 2.01.96.3.15.5.22.57.34.08.12.08.7-.18 1.43Z" fill="white"/>
+        </svg>
+
+        Confirmar por WhatsApp
+
+      </a>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       FOOTER — HASHTAG
+  ============================================================ -->
+  <footer id="footer">
+    <div class="hashtag-label reveal">Etiquétanos en redes</div>
+    <div class="hashtag-tag serif reveal reveal-delay-1">#VeroyAriel2026</div>
+    <p class="hashtag-sub reveal reveal-delay-2">
+      No olvides etiquetarnos en todas tus publicaciones usando nuestro hashtag.
+      ¡Queremos ver tu perspectiva de este día tan especial!
+    </p>
+    <div class="footer-cr">
+      Veronica Montserrat Acosta Galván · 2026
+    </div>
+  </footer>
+
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    // ==========================================
+    // CONFIGURACIÓN — SOLO CAMBIA ESTO
+    // ==========================================
+
+    // ✅ FECHA DE LA BODA (año, mes-1, día, hora, minuto)
+    // Nota: en JavaScript los meses van de 0 a 11
+    // Enero=0, Febrero=1, Marzo=2, ..., Agosto=7, ..., Diciembre=11
+    const FECHA_BODA = new Date(2026, 5, 26, 13, 0, 0); // 26 junio 2026, 16:00 hrs
+
+    // ==========================================
+    // POPUP DE AUDIO
+    // ==========================================
+    let musicaActiva = false;
+    const audio = document.getElementById('bgMusic');
+    const btn   = document.getElementById('musicBtn');
+
+    function abrirConMusica() {
+      document.getElementById('audioPopup').style.display = 'none';
+      audio.volume = 0.35;
+      audio.play().catch(() => {});
+      musicaActiva = true;
+      btn.textContent = '♫';
+    }
+
+    function abrirSinMusica() {
+      document.getElementById('audioPopup').style.display = 'none';
+    }
+
+    function toggleMusica() {
+      if (musicaActiva) {
+        audio.pause();
+        musicaActiva = false;
+        btn.textContent = '♪';
+      } else {
+        audio.play().catch(() => {});
+        musicaActiva = true;
+        btn.textContent = '♫';
+      }
+    }
+
+    // ==========================================
+    // CUENTA REGRESIVA
+    // ==========================================
+    function actualizarContador() {
+      const ahora = new Date().getTime();
+      const diff  = FECHA_BODA.getTime() - ahora;
+
+      if (diff <= 0) {
+        document.querySelector('.countdown-wrapper').style.display = 'none';
+        document.getElementById('cdTextoFinal').style.display = 'block';
+        return;
+      }
+
+      const dias    = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const horas   = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const segs    = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('cdDias').textContent    = String(dias).padStart(2,'0');
+      document.getElementById('cdHoras').textContent   = String(horas).padStart(2,'0');
+      document.getElementById('cdMinutos').textContent = String(minutos).padStart(2,'0');
+      document.getElementById('cdSegundos').textContent= String(segs).padStart(2,'0');
+    }
+    actualizarContador();
+    setInterval(actualizarContador, 1000);
+
+    // ==========================================
+    // CARRUSEL DE GALERÍA
+    // ==========================================
+    let galeriaPos = 0;
+    const track = document.getElementById('galeriaTrack');
+    const step  = 300; // píxeles a mover por clic
+
+    function moverGaleria(dir) {
+      const maxScroll = track.scrollWidth - track.parentElement.clientWidth;
+      galeriaPos += dir * step;
+      galeriaPos  = Math.max(0, Math.min(galeriaPos, maxScroll));
+      track.style.transform = `translateX(-${galeriaPos}px)`;
+    }
+
+    // También con arrastre táctil (swipe)
+    let touchStartX = 0;
+    track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    track.addEventListener('touchend',   e => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) moverGaleria(diff > 0 ? 1 : -1);
+    });
+
+    // ==========================================
+    // BOTÓN VOLVER ARRIBA
+    // ==========================================
+    const topBtn = document.getElementById('topBtn');
+    window.addEventListener('scroll', () => {
+      topBtn.classList.toggle('visible', window.scrollY > 400);
+    });
+
+    // ==========================================
+    // ANIMACIONES DE ENTRADA (scroll)
+    // ==========================================
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ==========================================
+    // LIGHTBOX — Galería ampliada
+    // ==========================================
+    window.addEventListener('load', function () {
+      var lightbox   = document.getElementById('galeria-lightbox');
+      var lbImg      = document.getElementById('lbImg');
+      var lbCerrar   = document.getElementById('lbCerrar');
+      var lbPrev     = document.getElementById('lbPrev');
+      var lbNext     = document.getElementById('lbNext');
+      var lbContador = document.getElementById('lbContador');
+
+      if (!lightbox) return;
+
+      // Guarda los src originales antes de que onerror los elimine
+      var todosImgs = Array.from(document.querySelectorAll('#galeriaTrack .galeria-img'));
+      var srcs = [];
+      todosImgs.forEach(function (img) {
+        var s = img.getAttribute('src');
+        if (s) srcs.push(s);
+      });
+
+      var indiceActual = 0;
+
+      function abrirLightbox(indice) {
+        if (!srcs.length) return;
+        indiceActual = indice;
+        actualizarLightbox();
+        lightbox.classList.add('activo');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function cerrarLightbox() {
+        lightbox.classList.remove('activo');
+        document.body.style.overflow = '';
+      }
+
+      function actualizarLightbox() {
+        lbImg.style.opacity = '0';
+        lbImg.src = srcs[indiceActual];
+        lbImg.onload = function () { lbImg.style.opacity = '1'; };
+        lbContador.textContent = (indiceActual + 1) + ' / ' + srcs.length;
+        lbPrev.style.opacity = indiceActual === 0 ? '0.3' : '1';
+        lbNext.style.opacity = indiceActual === srcs.length - 1 ? '0.3' : '1';
+      }
+
+      function irAnterior() {
+        if (indiceActual > 0) { indiceActual--; actualizarLightbox(); }
+      }
+
+      function irSiguiente() {
+        if (indiceActual < srcs.length - 1) { indiceActual++; actualizarLightbox(); }
+      }
+
+      // Click en cada imagen del carrusel
+      var srcIndex = 0;
+      todosImgs.forEach(function (img) {
+        var s = img.getAttribute('src');
+        if (!s) return;
+        var idx = srcs.indexOf(s);
+        img.style.cursor = 'pointer';
+        img.addEventListener('click', function () { abrirLightbox(idx); });
+      });
+
+      lbCerrar.addEventListener('click', cerrarLightbox);
+      lbPrev.addEventListener('click', irAnterior);
+      lbNext.addEventListener('click', irSiguiente);
+
+      // Clic en fondo oscuro → cierra
+      lightbox.addEventListener('click', function (e) {
+        if (e.target === lightbox || e.target.classList.contains('lb-contenedor')) {
+          cerrarLightbox();
+        }
+      });
+
+      // Teclado: ← → Escape
+      document.addEventListener('keydown', function (e) {
+        if (!lightbox.classList.contains('activo')) return;
+        if (e.key === 'ArrowRight') irSiguiente();
+        if (e.key === 'ArrowLeft')  irAnterior();
+        if (e.key === 'Escape')     cerrarLightbox();
+      });
+
+      // Swipe táctil
+      var lbTouchX = 0;
+      lightbox.addEventListener('touchstart', function (e) { lbTouchX = e.touches[0].clientX; });
+      lightbox.addEventListener('touchend', function (e) {
+        var diff = lbTouchX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) { diff > 0 ? irSiguiente() : irAnterior(); }
+      });
+    });
+
+  </script>
+
+  <!-- ============================================================
+       LIGHTBOX — Modal de galería ampliada
+  ============================================================ -->
+  <div id="galeria-lightbox" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
+    <div class="lb-contenedor">
+      <img class="lb-img" id="lbImg" src="" alt="Imagen ampliada">
+    </div>
+    <button class="lb-cerrar" id="lbCerrar" aria-label="Cerrar">&#x2715;</button>
+    <button class="lb-nav prev" id="lbPrev" aria-label="Anterior">&#8249;</button>
+    <button class="lb-nav next" id="lbNext" aria-label="Siguiente">&#8250;</button>
+    <div class="lb-contador" id="lbContador"></div>
+  </div>
+
+</body>
+</html>
